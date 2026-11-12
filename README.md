@@ -1,73 +1,74 @@
-# SchizoDetect: Multistage Schizophrenia Severity Classification with CNN + GNN
+# Multistage Schizophrenia Detection using CNN and GNN
 
-**Live demo:** _add your Hugging Face Space link here_ · **Demo video:** _add link here_
+Live demo: https://varshaaaaaaaaaaa-schizodetect.hf.space/ (hosted on a Hugging Face Space)
 
-A research prototype that estimates one of four **symptom-severity tiers** (Healthy, Early, Moderate, Chronic) from structural brain MRI and basic phenotype data, using a CNN for image features and a graph neural network (GNN) for subject-level classification.
+A deep learning pipeline that looks at structural brain MRI scans and estimates how severe a person's schizophrenia symptoms are. Instead of the usual two-way answer (patient or healthy), it sorts people into four groups: Healthy, Early, Moderate and Chronic.
 
-> **Research/educational prototype, not a medical device.** The tiers are cohort-relative symptom-severity groups derived from SANS/SAPS scores. They are not clinical diagnoses or disease-progression stages.
+This is a research prototype, not a medical tool. The four groups are not clinical stages. I made them by splitting patients into thirds based on their SANS/SAPS symptom scores, so they only mean something inside this dataset. Please don't upload real patient scans to the demo.
 
-## Why this project
+## About schizophrenia and the idea behind this
 
-Most MRI-based schizophrenia work is binary (patient vs. control). Severity matters for monitoring, so this project explores whether severity tiers can also be estimated from structural MRI plus a similarity graph between subjects.
+Schizophrenia is a long-term brain disorder that affects how a person thinks, perceives things and feels. Doctors usually describe the symptoms in two groups. Positive symptoms are things added to a person's experience, like hallucinations, delusions and disorganized thinking. Negative symptoms are things taken away, like low motivation, flat emotion and withdrawing from other people. The SAPS and SANS scales are standard checklists clinicians use to rate each group.
+
+Brain MRI studies have found small average differences between people with schizophrenia and healthy people, such as enlarged fluid-filled spaces in the brain and less gray matter in some regions. These differences overlap a lot from person to person, so an MRI alone can't diagnose it. A lot of existing machine learning work just predicts patient versus healthy. Severity matters too, since symptoms change over time and doctors need to track them, so I wanted to see how far a model could go in estimating severity from structural MRI.
 
 ## How it works
 
-```
-T1 MRI (.nii.gz) -> preprocess (crop, normalize, 64^3)
-   -> ResNet-18 on 45 2D slices -> Healthy/Patient probability + 512-d embedding
-   -> + age, sex, structural and fMRI features
-   -> subject graph (5 nearest neighbours) -> 3-layer GAT -> 4-class tier
-   -> Flask dashboard (cohort graph, upload demo)
-```
+1. Take a T1 brain MRI, crop and normalize it, and resize it to 64x64x64.
+2. Cut out 45 2D slices and run them through a ResNet-18 (pretrained on ImageNet, fine-tuned on this data). It gives a patient-versus-healthy probability and a 512-number summary of each scan, averaged over the slices.
+3. Combine that summary with age, sex and some simple brain-region and fMRI connectivity features.
+4. Build a graph where every person is a node connected to their 5 most similar people, and train a graph attention network (GAT) to predict one of the four groups.
+5. A Flask dashboard shows the cohort graph and lets you upload a scan to see a prediction.
 
-| Script | Purpose |
-|---|---|
-| `01_stage_labeling.py` | Join participant + SANS/SAPS tables, assign tiers from percentiles, balance controls |
-| `02_preprocess_npy_3d.py` | Crop, clip, normalize, resize MRI to 64^3; stratified 80/20 split (seed 42) |
-| `03_train_binary_cnn_embeddings.py` | Fine-tune ResNet-18 (binary), export per-subject 512-d embeddings |
-| `04_extract_structural_features.py` | Simple regional intensity/volume proxies (not anatomical segmentation) |
-| `05_extract_fmri_features.py` | Coarse-grid functional connectivity features |
-| `06_gnn_classifier.py` | Build subject graph, train 4-class GAT |
-| `07_predict_patient.py` | CLI prediction for a participant already in the CSV |
-| `08_cnn_evaluation.py`, `09_gnn_evaluation.py` | Metrics and plots |
-| `app.py`, `templates/`, `static/` | Flask web app |
+## What each file does
+
+- `01_stage_labeling.py` reads the participant tables and symptom scores from both datasets and keeps only people who have a T1 MRI. Healthy controls get the Healthy label. For patients it adds up the SANS/SAPS ratings, turns that into a percentage, and splits patients into thirds to label them Early, Moderate or Chronic. It also balances the number of people in each group.
+- `02_preprocess_npy_3d.py` loads each MRI, crops away the empty background, clips extreme values, normalizes the intensities, and resizes the scan to 64x64x64. It then makes the 80/20 train and test split and saves everything as NumPy files.
+- `03_train_binary_cnn_embeddings.py` fine-tunes the ResNet-18 to tell patients from healthy controls using 45 slices per scan, then saves a probability and a 512-number embedding for every person. These embeddings are what the graph model uses later.
+- `04_extract_structural_features.py` calculates simple numbers from each scan, like intensity and volume in different regions, left versus right differences, and a coarse grid over the brain.
+- `05_extract_fmri_features.py` takes the fMRI scans, splits the brain into a grid, and measures how strongly different regions' activity moves together over time.
+- `06_gnn_classifier.py` puts it all together. It builds the node features, connects each person to their 5 most similar people, and trains the graph attention network to predict the four groups. It saves the best model, the predictions and the result plots.
+- `07_predict_patient.py` is a command-line demo. You enter the ID of someone already in the dataset and it prints the predicted group and probabilities.
+- `08_cnn_evaluation.py` and `09_gnn_evaluation.py` make the confusion matrices, ROC curve and F1 charts for the CNN and the GNN.
+- `app.py`, `templates/` and `static/` are the Flask web app: the cohort statistics, the population graph, and the scan upload with its slice viewer and results.
+- `Outputs/` holds the saved models, predictions and plots. `docs/PROJECT_REPORT.md` is a longer write-up.
 
 ## Data
 
-Two public OpenNeuro datasets (DS115 and the UCLA Consortium for Neuropsychiatric Phenomics set), 97 subjects with T1 MRI after filtering and balancing (77 train / 20 test). Raw scans are **not** included; download them from OpenNeuro and place them in `dataset_115/` and `dataset_ucla/`. Check each dataset's license before redistributing anything derived from it.
+I combined two public datasets from OpenNeuro:
 
-## Results (single split, 20 test subjects)
+- **DS115**: "Working memory in healthy and schizophrenic individuals" (OpenNeuro ds000115)
+- **UCLA CNP**: "UCLA Consortium for Neuropsychiatric Phenomics LA5c Study" (OpenNeuro ds000030)
 
-| Task | Test accuracy |
-|---|---|
-| Binary CNN (Healthy vs. Schizophrenia) | 90% (18/20) |
-| 4-tier GNN | 80% (16/20) |
+After keeping people with a T1 scan and balancing the groups, I had 97 subjects (74 from UCLA and 23 from DS115). I split them 80/20 with a fixed random seed, giving 77 for training and 20 for testing, with the same mix of groups in both. The raw scans aren't in this repo. Download them from OpenNeuro and put them in `dataset_115/` and `dataset_ucla/` if you want to rerun everything.
 
-Per-tier GNN F1: Healthy 0.91, Early 0.89, Moderate 0.73, Chronic 0.67. See `Outputs/` for confusion matrices and curves.
+## Results
 
-## Limitations (read before citing the numbers)
+On the 20 held-out test subjects:
 
-- **Small sample:** 20 test subjects, so each subject moves accuracy by 5 points.
-- **Proxy labels:** tiers come from symptom-score percentiles within this cohort.
-- **Graph uses the symptom score:** `norm_score` defines the labels and also builds the graph edges, so the graph carries target information. The graph is also built over the full cohort (transductive). Rebuilding the graph from age/sex and embedding similarity only is the obvious next test.
-- **Possible site/scanner confound:** controls and patients are drawn from different datasets in different proportions.
-- **Proxy features:** structural features are coordinate-based proxies, not segmented anatomy (no true ventricular volume).
-- **fMRI mismatch:** DS115 task fMRI and UCLA resting fMRI are not equivalent paradigms.
+- Patient versus healthy (CNN): 90% accuracy, 18 of 20 correct
+- Four groups (GNN): 80% accuracy, 16 of 20 correct
 
-## Run locally
+In the GNN, Healthy and Early did best (F1 about 0.9) and Moderate and Chronic were harder to separate (F1 0.73 and 0.67). Plots are in `Outputs/`.
+
+## Limitations
+
+- The test set is only 20 people, so one person changes the accuracy by 5 points. These numbers are a rough signal, not proof.
+- The graph uses age, sex and the same symptom score that defines the four groups, so some information about the answer ends up in the graph. It is also built using all subjects, including the test ones. Rebuilding the graph without the symptom score is the first thing I'd try next.
+- Controls and patients come from the two datasets in different proportions, so the CNN may partly be picking up scanner or site differences.
+- The structural features are simple region-based numbers, not real anatomical segmentation.
+
+## Running it locally
 
 ```bash
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python app.py        # http://127.0.0.1:5000
+python app.py
 ```
 
-The app needs `Outputs/npy_dataset/fmri_features_4class.csv`, which is generated by scripts 04 and 05 (needs the raw datasets). To regenerate everything, run scripts 01 to 06 in order, then 08 and 09.
+Then open http://127.0.0.1:5000. The saved models and `Outputs/npy_dataset/fmri_features_4class.csv` are included, so the app runs without the raw data. To regenerate everything from the raw data, run scripts 01 to 06 in order, then 08 and 09.
 
-## Deploy (Hugging Face Spaces, Docker)
+There's also a `Dockerfile` if you want to host it somewhere.
 
-The included `Dockerfile` serves the app with gunicorn on port 7860. Model weights are tracked with Git LFS (`.gitattributes`). Do not enable public uploads of real patient scans.
+## Notes
 
-## Acknowledgements
-
-Datasets: OpenNeuro DS115 and UCLA CNP. Code was developed with AI assistance (ChatGPT, VS Code).
+I used AI tools (ChatGPT and VS Code) to help write the code. The datasets come from OpenNeuro, and anything derived from them should follow their original licenses.
