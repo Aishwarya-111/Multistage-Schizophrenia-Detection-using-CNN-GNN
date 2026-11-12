@@ -1,0 +1,9 @@
+.git
+.venv
+__pycache__
+dataset_*
+uploads/*
+static/slices/*
+docs
+*.nii
+*.nii.gz

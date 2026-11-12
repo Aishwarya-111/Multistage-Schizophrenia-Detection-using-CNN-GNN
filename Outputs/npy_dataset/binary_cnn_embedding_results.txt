@@ -1,0 +1,17 @@
+Best Validation Binary Accuracy: 87.50%
+Best Epoch: 11
+Final Test Binary Accuracy: 90.00%
+
+Classification Report:
+               precision    recall  f1-score   support
+
+      Healthy       0.80      0.80      0.80         5
+Schizophrenia       0.93      0.93      0.93        15
+
+     accuracy                           0.90        20
+    macro avg       0.87      0.87      0.87        20
+ weighted avg       0.90      0.90      0.90        20
+
+Confusion Matrix:
+[[ 4  1]
+ [ 1 14]]

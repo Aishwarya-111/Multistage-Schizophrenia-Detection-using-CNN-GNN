@@ -1,0 +1,18 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+# raw data (download from OpenNeuro, do not commit)
+dataset_115/
+dataset_ucla/
+*.nii
+*.nii.gz
+# preprocessed volumes and user uploads
+Outputs/npy_dataset/train/
+Outputs/npy_dataset/test/
+*.npy
+uploads/*
+!uploads/.gitkeep
+static/slices/*
+!static/slices/.gitkeep

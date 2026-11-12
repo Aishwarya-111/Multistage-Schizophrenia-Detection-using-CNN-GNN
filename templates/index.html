@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchizoDetect — AI Schizophrenia Detection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="app-container">
+
+        <!-- ═══════ SIDEBAR ═══════ -->
+        <aside class="sidebar-nav" id="sidebar-nav">
+            <div class="logo-area">
+                <div class="logo-icon-wrap"><i class="fa-solid fa-brain"></i></div>
+                <div class="logo-text">
+                    <h1>SchizoDetect</h1>
+                    <span>AI Schizophrenia Detection</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="home-tab">
+                    <i class="fa-solid fa-house-medical"></i>
+                    <span>Overview</span>
+                </button>
+                <button class="nav-btn" data-tab="analyze-tab">
+                    <i class="fa-solid fa-microscope"></i>
+                    <span>Patient Diagnostic Lab</span>
+                </button>
+                <button class="nav-btn" data-tab="graph-tab">
+                    <i class="fa-solid fa-circle-nodes"></i>
+                    <span>Population Graph</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- ═══════ MAIN ═══════ -->
+        <main class="main-content">
+
+            <div style="background:#fff4d6;color:#5c4400;padding:6px 16px;font-size:13px;text-align:center;">Research demo, not a medical device. Stages are symptom-severity tiers from a small public cohort. Do not upload real patient scans.</div>
+            <header class="app-header">
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="header-title">
+                    <h2 id="tab-heading">Overview</h2>
+                    <p id="tab-subheading">Multimodal AI-driven schizophrenia staging platform</p>
+                </div>
+                <div class="header-badge">
+                    <span class="badge-dot"></span>
+                    <span>AI Detection Engine</span>
+                </div>
+            </header>
+
+            <!-- ═══ TAB: HOME ═══ -->
+            <section id="home-tab" class="tab-pane active">
+
+                <div class="hero-section">
+                    <div class="hero-text">
+                        <span class="hero-label">AI-Powered Neuroimaging Analysis</span>
+                        <h1>Detecting Schizophrenia<br>With Advanced Brain Imaging</h1>
+                        <p>SchizoDetect uses deep learning with ResNet18 structural MRI embeddings and a Graph Attention Network to accurately classify patients into four clinical stages — without any phenotypic data leakage.</p>
+                        <div class="hero-stats">
+                            <div class="hero-stat">
+                                <strong>~1%</strong>
+                                <span>Global prevalence</span>
+                            </div>
+                            <div class="hero-stat">
+                                <strong>24M+</strong>
+                                <span>People affected</span>
+                            </div>
+                            <div class="hero-stat">
+                                <strong>97</strong>
+                                <span>Subjects in cohort</span>
+                            </div>
+                            <div class="hero-stat">
+                                <strong>4</strong>
+                                <span>Clinical stages</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-graphic">
+                        <div class="brain-graphic">
+                            <i class="fa-solid fa-brain"></i>
+                            <div class="brain-rings">
+                                <div class="ring r1"></div>
+                                <div class="ring r2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-heading">
+                    <h3>What is Schizophrenia?</h3>
+                    <div class="heading-rule"></div>
+                </div>
+
+                <div class="three-col-grid">
+                    <div class="info-card">
+                        <div class="info-icon teal"><i class="fa-solid fa-brain"></i></div>
+                        <h4>A Brain Disorder</h4>
+                        <p>A chronic psychiatric disorder characterised by disturbances in thought, perception, emotion, and behaviour. Structural MRI reveals measurable neuroanatomical differences — particularly in the hippocampus, prefrontal cortex, and ventricles.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon blue"><i class="fa-solid fa-timeline"></i></div>
+                        <h4>Progressive Stages</h4>
+                        <p>The condition develops across distinct clinical stages — from a healthy baseline through early prodromal symptoms, active psychosis, and eventually chronic impairment. Stage-specific intervention significantly improves patient outcomes.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon slate"><i class="fa-solid fa-pills"></i></div>
+                        <h4>Manageable with Treatment</h4>
+                        <p>While there is no cure, antipsychotic therapy and psychosocial support substantially reduce symptom severity. Accurate objective staging enables clinicians to personalise treatment plans and monitor progression over time.</p>
+                    </div>
+                </div>
+
+                <div class="section-heading">
+                    <h3>The Four Clinical Stages</h3>
+                    <div class="heading-rule"></div>
+                </div>
+
+                <div class="stages-grid">
+                    <div class="stage-card">
+                        <div class="stage-number s-healthy">01</div>
+                        <div class="stage-body">
+                            <div class="stage-top">
+                                <h4>Healthy Controls</h4>
+                                <span class="stage-tag tag-healthy">No Disorder</span>
+                            </div>
+                            <p>Neurotypical individuals serving as the biological baseline. Normal hippocampal volume, cortical thickness, and ventricular size form the reference for all cross-stage comparisons within the cohort.</p>
+                        </div>
+                    </div>
+                    <div class="stage-card">
+                        <div class="stage-number s-early">02</div>
+                        <div class="stage-body">
+                            <div class="stage-top">
+                                <h4>Early Schizophrenia</h4>
+                                <span class="stage-tag tag-early">Prodromal / First Episode</span>
+                            </div>
+                            <p>Onset of psychosis or prodromal symptoms — mild hallucinations, social withdrawal, and cognitive decline. Structural MRI changes are present but subtle; detectable only with deep learning-derived embeddings.</p>
+                        </div>
+                    </div>
+                    <div class="stage-card">
+                        <div class="stage-number s-moderate">03</div>
+                        <div class="stage-body">
+                            <div class="stage-top">
+                                <h4>Moderate Schizophrenia</h4>
+                                <span class="stage-tag tag-moderate">Active Psychosis</span>
+                            </div>
+                            <p>Persistent positive and negative symptoms with marked neuroanatomical changes — grey matter reduction, ventricular enlargement, and measurable hippocampal asymmetry are characteristic of this stage.</p>
+                        </div>
+                    </div>
+                    <div class="stage-card">
+                        <div class="stage-number s-chronic">04</div>
+                        <div class="stage-body">
+                            <div class="stage-top">
+                                <h4>Chronic Schizophrenia</h4>
+                                <span class="stage-tag tag-chronic">Long-term Illness</span>
+                            </div>
+                            <p>Years of illness with significant functional impairment. Negative symptoms dominate. Severe neuroanatomical deterioration is evident and patients typically require long-term antipsychotic management.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-heading">
+                    <h3>Symptom Clusters</h3>
+                    <div class="heading-rule"></div>
+                </div>
+
+                <div class="two-col-grid">
+                    <div class="symptom-box">
+                        <div class="symptom-header saps-header">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <h4>Positive Symptoms — SAPS</h4>
+                        </div>
+                        <ul>
+                            <li>Auditory and visual hallucinations</li>
+                            <li>Persecutory and grandiose delusions</li>
+                            <li>Disorganised thought and speech</li>
+                            <li>Bizarre and disorganised behaviour</li>
+                            <li>Inappropriate emotional responses</li>
+                        </ul>
+                    </div>
+                    <div class="symptom-box">
+                        <div class="symptom-header sans-header">
+                            <i class="fa-solid fa-minus-circle"></i>
+                            <h4>Negative Symptoms — SANS</h4>
+                        </div>
+                        <ul>
+                            <li>Affective flattening (blunted emotions)</li>
+                            <li>Alogia — poverty of speech</li>
+                            <li>Avolition and social withdrawal</li>
+                            <li>Anhedonia — inability to feel pleasure</li>
+                            <li>Impaired attention and cognition</li>
+                        </ul>
+                    </div>
+                </div>
+
+                
+
+            </section>
+
+            <!-- ═══ TAB: DIAGNOSTIC LAB ═══ -->
+            <section id="analyze-tab" class="tab-pane">
+                <div class="diagnostic-grid">
+
+                    <!-- FORM COLUMN -->
+                    <div class="card form-column">
+                        <div class="card-header">
+                            <i class="fa-solid fa-id-card"></i>
+                            <h4>Patient Demographics &amp; Clinical Assessment</h4>
+                        </div>
+
+                        <form id="analyze-form" enctype="multipart/form-data">
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="patient-age">Age (Years)</label>
+                                    <input type="number" id="patient-age" name="age" min="15" max="85" value="30" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="patient-sex">Biological Sex</label>
+                                    <select id="patient-sex" name="sex" required>
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-section-label">
+                                <i class="fa-solid fa-clipboard-list"></i>
+                                SAPS / SANS Clinical Ratings
+                                <span>Score 0 (Absent) → 5 (Severe)</span>
+                            </div>
+
+                            <div class="sliders-grid">
+                                <div class="slider-group sans-group">
+                                    <div class="slider-group-title">SANS — Negative Symptoms</div>
+                                    <div class="slider-row">
+                                        <div class="slider-label-row">
+                                            <span>Affective Flattening</span>
+                                            <span class="val-badge" id="val-sans-blunt">0</span>
+                                        </div>
+                                        <input type="range" name="sans_blunt" min="0" max="5" value="0" step="1"
+                                            oninput="document.getElementById('val-sans-blunt').textContent=this.value">
+                                    </div>
+                                    <div class="slider-row">
+                                        <div class="slider-label-row">
+                                            <span>Alogia</span>
+                                            <span class="val-badge" id="val-sans-alogia">0</span>
+                                        </div>
+                                        <input type="range" name="sans_alogia" min="0" max="5" value="0" step="1"
+                                            oninput="document.getElementById('val-sans-alogia').textContent=this.value">
+                                    </div>
+                                    <div class="slider-row">
+                                        <div class="slider-label-row">
+                                            <span>Avolition / Apathy</span>
+                                            <span class="val-badge" id="val-sans-avolition">0</span>
+                                        </div>
+                                        <input type="range" name="sans_avolition" min="0" max="5" value="0" step="1"
+                                            oninput="document.getElementById('val-sans-avolition').textContent=this.value">
+                                    </div>
+                                    <div class="slider-row">
+                                        <div class="slider-label-row">
+                                            <span>Anhedonia</span>
+                                            <span class="val-badge" id="val-sans-anhedonia">0</span>
+                                        </div>
+                                        <input type="range" name="sans_anhedonia" min="0" max="5" value="0" step="1"
+                                            oninput="document.getElementById('val-sans-anhedonia').textContent=this.value">
+                                    </div>
+                                    <div class="slider-row">
+                                        <div class="slider-label-row">
+                                            <span>Attention Impairment</span>
+                                            <span class="val-badge" id="val-sans-attention">0</span>
+                                        </div>
+                                        <input type="range" name="sans_attention" min="0" max="5" value="0" step="1"
+                                            oninput="document.getElementById('val-sans-attention').textContent=this.value">
+                                    </div>
+                                </div>
+
+                                <div class="slider-group saps-group">
+                                    <div class="slider-group-title">SAPS — Positive Symptoms</div>
+                                    <div class="slider-row">
+                                        <div class="slider-label-row">
+                                            <span>Hallucinations</span>
+                                            <span class="val-badge" id="val-saps-halluc">0</span>
+                                        </div>
+                                        <input type="range" name="saps_halluc" min="0" max="5" value="0" step="1"
+                                            oninput="document.getElementById('val-saps-halluc').textContent=this.value">
+                                    </div>
+                                    <div class="slider-row">
+                                        <div class="slider-label-row">
+                                            <span>Delusions</span>
+                                            <span class="val-badge" id="val-saps-delus">0</span>
+                                        </div>
+                                        <input type="range" name="saps_delus" min="0" max="5" value="0" step="1"
+                                            oninput="document.getElementById('val-saps-delus').textContent=this.value">
+                                    </div>
+                                    <div class="slider-row">
+                                        <div class="slider-label-row">
+                                            <span>Bizarre Behaviour</span>
+                                            <span class="val-badge" id="val-saps-behav">0</span>
+                                        </div>
+                                        <input type="range" name="saps_behav" min="0" max="5" value="0" step="1"
+                                            oninput="document.getElementById('val-saps-behav').textContent=this.value">
+                                    </div>
+                                    <div class="slider-row">
+                                        <div class="slider-label-row">
+                                            <span>Thought Disorder</span>
+                                            <span class="val-badge" id="val-saps-thought">0</span>
+                                        </div>
+                                        <input type="range" name="saps_thought" min="0" max="5" value="0" step="1"
+                                            oninput="document.getElementById('val-saps-thought').textContent=this.value">
+                                    </div>
+                                    <div class="slider-row">
+                                        <div class="slider-label-row">
+                                            <span>Inappropriate Affect</span>
+                                            <span class="val-badge" id="val-saps-inapp">0</span>
+                                        </div>
+                                        <input type="range" name="saps_inapp" min="0" max="5" value="0" step="1"
+                                            oninput="document.getElementById('val-saps-inapp').textContent=this.value">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="score-row">
+                                <div class="score-item">
+                                    <span class="score-label">Total Score</span>
+                                    <span class="score-value" id="saps-sans-total-score">0 / 50</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Severity</span>
+                                    <span class="score-value teal-text" id="saps-sans-norm-score">0.00%</span>
+                                </div>
+                            </div>
+
+                            <div class="form-section-label">
+                                <i class="fa-solid fa-upload"></i>
+                                MRI Upload
+                                <span>Structural T1-weighted NIfTI scan</span>
+                            </div>
+
+                            <div class="drop-zone" id="drop-zone-container">
+                                <i class="fa-solid fa-file-medical drop-icon"></i>
+                                <p class="drop-text">Drag &amp; drop your <strong>.nii</strong> or <strong>.nii.gz</strong> file here</p>
+                                <span class="drop-or">or</span>
+                                <span class="drop-browse">Browse files</span>
+                                <span class="file-name-display" id="selected-file-name">No file selected</span>
+                                <input type="file" id="nifti-file" name="file" accept=".nii,.nii.gz" class="hidden-file-input" required>
+                            </div>
+
+                            <button type="submit" class="submit-btn" id="analyze-submit-btn">
+                                <i class="fa-solid fa-play"></i>
+                                Run Diagnostic Prediction
+                            </button>
+
+                        </form>
+                    </div>
+
+                    <!-- RESULTS COLUMN -->
+                    <div class="results-wrapper">
+                        <div class="card results-placeholder" id="results-placeholder">
+                            <div class="placeholder-inner">
+                                <div class="placeholder-icon">
+                                    <i class="fa-solid fa-microscope"></i>
+                                </div>
+                                <h4>Awaiting Analysis</h4>
+                                <p>Complete the patient demographics, rate clinical symptoms using the SANS/SAPS scales, upload a structural T1w MRI scan, and click <strong>Run Diagnostic Prediction</strong>.</p>
+                                <div class="placeholder-steps">
+                                    <div class="ph-step"><span>1</span> Enter patient details</div>
+                                    <div class="ph-step"><span>2</span> Rate symptoms</div>
+                                    <div class="ph-step"><span>3</span> Upload .nii scan</div>
+                                    <div class="ph-step"><span>4</span> Run prediction</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="results-active hidden" id="results-panel">
+
+                            <div class="stage-banner" id="banner-predicted-stage-box">
+                                <div class="stage-banner-left">
+                                    <span class="stage-banner-label">Predicted Stage</span>
+                                    <h2 id="results-predicted-stage">Healthy Controls</h2>
+                                </div>
+                                <div class="confidence-ring">
+                                    <svg viewBox="0 0 90 90">
+                                        <circle class="ring-track" cx="45" cy="45" r="38"/>
+                                        <circle class="ring-fill" id="results-confidence-circle" cx="45" cy="45" r="38"
+                                                style="stroke-dasharray:238;stroke-dashoffset:0;"/>
+                                    </svg>
+                                    <div class="confidence-label-inner">
+                                        <strong id="results-confidence-pct">0%</strong>
+                                        <small>Confidence</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-brain"></i>
+                                    <h4>3D Brain Slice Viewer</h4>
+                                </div>
+                                <div class="brain-viewer">
+                                    <div class="brain-img-box">
+                                        <img id="slice-viewer-img" src="" alt="Brain slice">
+                                        <span class="slice-label" id="slice-type-label">Axial Slice #32</span>
+                                    </div>
+                                    <div class="brain-viewer-controls">
+                                        <div class="axis-btns">
+                                            <button class="axis-btn active" data-axis="axial">Axial</button>
+                                            <button class="axis-btn" data-axis="coronal">Coronal</button>
+                                            <button class="axis-btn" data-axis="sagittal">Sagittal</button>
+                                        </div>
+                                        <div class="scrub-ctrl">
+                                            <label>Slice (0 – 63)</label>
+                                            <input type="range" id="slice-scrubber" min="0" max="63" value="32">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-chart-bar"></i>
+                                    <h4>Stage Probability Distribution</h4>
+                                </div>
+                                <div class="prob-bars">
+                                    <div class="prob-row">
+                                        <span class="prob-label">Healthy</span>
+                                        <div class="prob-track"><div class="prob-fill fill-healthy" id="prob-healthy-bar"></div></div>
+                                        <span class="prob-pct" id="prob-healthy-txt">0%</span>
+                                    </div>
+                                    <div class="prob-row">
+                                        <span class="prob-label">Early</span>
+                                        <div class="prob-track"><div class="prob-fill fill-early" id="prob-early-bar"></div></div>
+                                        <span class="prob-pct" id="prob-early-txt">0%</span>
+                                    </div>
+                                    <div class="prob-row">
+                                        <span class="prob-label">Moderate</span>
+                                        <div class="prob-track"><div class="prob-fill fill-moderate" id="prob-moderate-bar"></div></div>
+                                        <span class="prob-pct" id="prob-moderate-txt">0%</span>
+                                    </div>
+                                    <div class="prob-row">
+                                        <span class="prob-label">Chronic</span>
+                                        <div class="prob-track"><div class="prob-fill fill-chronic" id="prob-chronic-bar"></div></div>
+                                        <span class="prob-pct" id="prob-chronic-txt">0%</span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-gauge-high"></i>
+                                    <h4>Structural Biomarkers</h4>
+                                </div>
+                                <div class="biomarker-grid">
+                                    <div class="biomarker-item">
+                                        <span>Brain Volume Ratio</span>
+                                        <strong id="feat-vol-ratio">—</strong>
+                                    </div>
+                                    <div class="biomarker-item">
+                                        <span>L–R Asymmetry</span>
+                                        <strong id="feat-asymmetry">—</strong>
+                                    </div>
+                                    <div class="biomarker-item">
+                                        <span>Hippocampal Diff.</span>
+                                        <strong id="feat-hippo-diff">—</strong>
+                                    </div>
+                                    <div class="biomarker-item">
+                                        <span>Ventricle Density</span>
+                                        <strong id="feat-ventricle">—</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-people-arrows"></i>
+                                    <h4>Phenotypic Neighbours</h4>
+                                </div>
+                                <p class="card-desc">The GNN aligned this patient with the following cohort subjects:</p>
+                                <div id="results-neighbors-list" class="neighbors-list"></div>
+                            </div>
+
+                            <button onclick="window.print()" class="print-btn">
+                                <i class="fa-solid fa-print"></i> Print Diagnostic Report
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ═══ TAB: GRAPH ═══ -->
+            <section id="graph-tab" class="tab-pane">
+                <div class="graph-layout">
+                    <div class="card graph-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-circle-nodes"></i>
+                            <h4>Population Phenotypic Graph</h4>
+                            <span class="card-hint">Scroll to zoom &nbsp;·&nbsp; Drag to pan &nbsp;·&nbsp; Click nodes to inspect</span>
+                        </div>
+                        <div class="graph-container">
+                            <svg id="network-graph-svg"></svg>
+                            <div class="graph-legend">
+                                <div class="leg-item"><span class="leg-dot ld-healthy"></span> Healthy</div>
+                                <div class="leg-item"><span class="leg-dot ld-early"></span> Early</div>
+                                <div class="leg-item"><span class="leg-dot ld-moderate"></span> Moderate</div>
+                                <div class="leg-item"><span class="leg-dot ld-chronic"></span> Chronic</div>
+                                <div class="leg-item"><span class="leg-dot ld-new pulse-dot"></span> Uploaded</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card inspector-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <h4>Node Inspector</h4>
+                        </div>
+                        <div id="inspector-placeholder" class="inspector-empty">
+                            <i class="fa-solid fa-hand-pointer"></i>
+                            <p>Click any node to inspect patient details</p>
+                        </div>
+                        <div id="inspector-content" class="inspector-data hidden">
+                            <div class="inspector-header">
+                                <i class="fa-solid fa-circle-user inspector-avatar"></i>
+                                <div>
+                                    <h4 id="inspect-node-id">—</h4>
+                                    <span id="inspect-node-dataset" class="teal-text">—</span>
+                                </div>
+                            </div>
+                            <div class="inspector-rows">
+                                <div class="inspector-row">
+                                    <span>Stage</span><strong id="inspect-node-stage">—</strong>
+                                </div>
+                                <div class="inspector-row">
+                                    <span>Age</span><strong id="inspect-node-age">—</strong>
+                                </div>
+                                <div class="inspector-row">
+                                    <span>Sex</span><strong id="inspect-node-sex">—</strong>
+                                </div>
+                                <div class="inspector-row">
+                                    <span>Symptom Severity</span><strong id="inspect-node-severity">—</strong>
+                                </div>
+                                <div class="inspector-row">
+                                    <span>CNN Schz. Prob.</span><strong id="inspect-node-prob">—</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Pipeline loader overlay -->
+    <div class="pipeline-overlay hidden" id="pipeline-overlay">
+        <div class="pipeline-card">
+            <div class="pipeline-card-header">
+                <i class="fa-solid fa-spinner fa-spin teal-text"></i>
+                <h4>Running Diagnostic Pipeline</h4>
+            </div>
+            <p>Zero-leakage transductive Graph Attention Network inference in progress.</p>
+            <div class="pipeline-steps">
+                <div class="pipeline-step" id="step-upload">
+                    <span class="step-icon"><i class="fa-solid fa-circle-notch"></i></span>
+                    <span>Uploading structural MRI NIfTI volume</span>
+                </div>
+                <div class="pipeline-step" id="step-preprocess">
+                    <span class="step-icon"><i class="fa-solid fa-circle-notch"></i></span>
+                    <span>Cropping, normalising, and resizing volume</span>
+                </div>
+                <div class="pipeline-step" id="step-cnn">
+                    <span class="step-icon"><i class="fa-solid fa-circle-notch"></i></span>
+                    <span>Running ResNet18 slice embedding extractor</span>
+                </div>
+                <div class="pipeline-step" id="step-features">
+                    <span class="step-icon"><i class="fa-solid fa-circle-notch"></i></span>
+                    <span>Profiling structural biomarkers and asymmetry</span>
+                </div>
+                <div class="pipeline-step" id="step-gnn">
+                    <span class="step-icon"><i class="fa-solid fa-circle-notch"></i></span>
+                    <span>Aligning patient node with KNN graph topology</span>
+                </div>
+                <div class="pipeline-step" id="step-gat">
+                    <span class="step-icon"><i class="fa-solid fa-circle-notch"></i></span>
+                    <span>Executing GAT transductive forward inference</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
